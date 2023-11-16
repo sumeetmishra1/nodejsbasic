@@ -1,3 +1,5 @@
-console.log("Hello World");
-const fs=require('fs');
-fs.writeFileSync('hello.txt','Hello from node.js');
+const http= require('http');
+const server=http.createServer((req,res)=>{
+    console.log("sumit")
+})
+server.listen(4000)
