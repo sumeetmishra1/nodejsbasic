@@ -1,33 +1,37 @@
 const http= require('http');
+const fs=require('fs');
 const server=http.createServer((req,res)=>{
     const url=req.url;
+    const method=req.method;
     if(url === '/'){
     res.write('<html>');
     res.write('<head><title>My First page</title></head>');
-    res.write('<body><h1>Hello from node js server</h1></body>')
+    res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">send</button></body>')
     res.write('</html>');
-    res.end();
+    return res.end();
     }
-    else if(url=== '/home'){
-        res.write('<html>');
+    else if(url === '/message' && method==='POST'){
+        const body=[];
+        req.on('data',(chunk)=>{
+            body.push(chunk);
+        });
+       return req.on('end',()=>{
+            const parsedbody = Buffer.concat(body).toString();
+            const message =parsedbody.split('=')[1];
+            fs.writeFile('message.txt',message,(err)=>{
+                res.statusCode=302;
+                res.setHeader('Location','/')
+                return res.end();
+            }) 
+        })
+       
+    }
+    res.setHeader('Content-Type', 'text/html');
+    res.write('<html>');
     res.write('<head><title>My First page</title></head>');
-    res.write('<body><h1>Welcome home</h1></body>')
+    res.write('<body><h1>Hello from my Node.js page</h1></body>')
     res.write('</html>');
     res.end();
-    }
-    else if(url=== '/about'){
-        res.write('<html>');
-    res.write('<head><title>My First page</title></head>');
-    res.write('<body><h1>Welcome to about page</h1></body>')
-    res.write('</html>');
-    res.end();
-    }
-    else if(url=== '/node'){
-        res.write('<html>');
-    res.write('<head><title>My First page</title></head>');
-    res.write('<body><h1>Welcome to node js page</h1></body>')
-    res.write('</html>');
-    res.end();
-    }
+    
 })
 server.listen(3000)
