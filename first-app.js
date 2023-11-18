@@ -1,16 +1,13 @@
 const express=require('express');
+const bodyparser= require('body-parser');
 const app = express();
-app.use('/',(req, res, next)=>{
-    console.log('This always runs');
-    next();
-});
-app.use('/addproduct',(req, res, next)=>{
-    console.log("next middleware")
-    res.send('<h1>Add product</h1>');
-});
-app.use('/',(req, res, next)=>{
-    res.send('<h1>Hello from express</h1>');
-    console.log("next middleware")
-});
+const adminroutes= require('./Routes/admin');
+const shoproutes =require('./Routes/shop');
+app.use(bodyparser.urlencoded({extended:true}));
+app.use(shoproutes);
+app.use('/admin',adminroutes);
+app.use((req,res,next)=>{
+    res.status(404).send('<h1>Page Not Found</h1>')
+})
 
 app.listen(3000);
